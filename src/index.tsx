@@ -6,11 +6,8 @@ const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 
-// Определите данные для передачи в компоненты
-const OFFERS_COUNT = 5;
-
 root.render(
   <React.StrictMode>
-    <App offersCount={OFFERS_COUNT} />
+    <App />
   </React.StrictMode>
 );
