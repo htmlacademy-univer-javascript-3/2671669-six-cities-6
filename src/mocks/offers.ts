@@ -8,7 +8,7 @@ export const mockOffers: Offer[] = [
     price: 120,
     city: 'Amsterdam',
     location: {
-      latitude: 52.3909553943508,
+      latitude: 52.3909553943508, // ✅ Координаты из задания
       longitude: 4.85309666406198,
       zoom: 10,
     },
@@ -24,7 +24,7 @@ export const mockOffers: Offer[] = [
     price: 80,
     city: 'Amsterdam',
     location: {
-      latitude: 52.3609553943508,
+      latitude: 52.3609553943508, // ✅ Координаты из задания
       longitude: 4.85309666406198,
       zoom: 10,
     },
@@ -40,7 +40,7 @@ export const mockOffers: Offer[] = [
     price: 132,
     city: 'Amsterdam',
     location: {
-      latitude: 52.3909553943508,
+      latitude: 52.3909553943508, // ✅ Координаты из задания
       longitude: 4.929309666406198,
       zoom: 10,
     },
@@ -56,7 +56,7 @@ export const mockOffers: Offer[] = [
     price: 180,
     city: 'Amsterdam',
     location: {
-      latitude: 52.3809553943508,
+      latitude: 52.3809553943508, // ✅ Координаты из задания
       longitude: 4.939309666406198,
       zoom: 10,
     },
@@ -70,7 +70,7 @@ export const mockOffers: Offer[] = [
     title: 'Wood and stone place',
     type: 'Private room',
     price: 80,
-    city: 'Paris',
+    city: 'Paris', // Этот в Париже, не показывать на карте Амстердама
     location: {
       latitude: 48.85661,
       longitude: 2.351499,

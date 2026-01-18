@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Offer } from '../../shared/entities/offer/types';
 import OffersList from '../../components/offer-card-list/offer-card-list';
+import Map from '../../components/map/map'; // ✅ Импортируем компонент Map
 
 interface MainPageProps {
   offers: Offer[];
@@ -17,7 +18,6 @@ function MainPage({ offers }: MainPageProps) {
     setActiveCardId(offerId);
   };
 
-  // ✅ Используем activeCardId для поиска активного предложения
   const activeOffer = cityOffers.find((offer) => offer.id === activeCardId);
 
   return (
@@ -113,7 +113,10 @@ function MainPage({ offers }: MainPageProps) {
 
             </section>
             <div className="cities__right-section">
-              <section className="cities__map map"></section>
+              {/* ✅ Заменяем пустой контейнер на реальную карту */}
+              <section className="cities__map map">
+                <Map offers={cityOffers} activeCardId={activeCardId} />
+              </section>
             </div>
           </div>
         </div>
@@ -123,3 +126,4 @@ function MainPage({ offers }: MainPageProps) {
 }
 
 export default MainPage;
+

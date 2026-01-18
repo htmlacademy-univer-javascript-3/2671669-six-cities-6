@@ -3,22 +3,26 @@ import { Offer } from '../../shared/entities/offer/types';
 
 interface OfferCardProps {
   offer: Offer;
-  isActive?: boolean; // ✅ Новый пропс для активного состояния
+  isActive?: boolean;
   onMouseEnter?: () => void;
   onMouseLeave?: () => void;
+  cardClassName?: string;
+  imageWrapperClassName?: string;
 }
 
 const OfferCard = ({
   offer,
-  isActive = false, // ✅ Значение по умолчанию false
+  isActive = false,
   onMouseEnter,
-  onMouseLeave
+  onMouseLeave,
+  cardClassName = 'cities__card',
+  imageWrapperClassName = 'cities__image-wrapper'
 }: OfferCardProps) => {
   const { id, title, type, price, rating, previewImage, isPremium, isFavorite } = offer;
 
   return (
     <article
-      className={`cities__card place-card ${isActive ? 'place-card--active' : ''}`} // ✅ Добавляем класс при активности
+      className={`${cardClassName} place-card ${isActive ? 'place-card--active' : ''}`}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
@@ -27,8 +31,7 @@ const OfferCard = ({
           <span>Premium</span>
         </div>
       )}
-
-      <div className="cities__image-wrapper place-card__image-wrapper">
+      <div className={`${imageWrapperClassName} place-card__image-wrapper`}>
         <Link to={`/offer/${id}`}>
           <img
             className="place-card__image"
@@ -39,7 +42,6 @@ const OfferCard = ({
           />
         </Link>
       </div>
-
       <div className="place-card__info">
         <div className="place-card__price-wrapper">
           <div className="place-card__price">
@@ -56,20 +58,17 @@ const OfferCard = ({
             <span className="visually-hidden">To bookmarks</span>
           </button>
         </div>
-
         <div className="place-card__rating rating">
           <div className="place-card__stars rating__stars">
             <span style={{ width: `${rating * 20}%` }}></span>
             <span className="visually-hidden">Rating</span>
           </div>
         </div>
-
         <h2 className="place-card__name">
           <Link to={`/offer/${id}`}>
             {title}
           </Link>
         </h2>
-
         <p className="place-card__type">{type}</p>
       </div>
     </article>
