@@ -5,31 +5,30 @@ import LoginPage from '../pages/login-page/login-page';
 import MainPage from '../pages/main-page/main-page';
 import NotFound404Page from '../pages/not-found-404-page/not-found-404-page';
 import OfferPage from '../pages/offer-page/offer-page';
+import { Offer} from '../shared/entities/offer/types';
+import { Review } from '../mocks/reviews';
 
-function App() {
+
+interface AppProps {
+  offers: Offer[];
+  reviews: Review[];
+}
+
+function App({ offers, reviews }: AppProps) {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Главная страница */}
-        <Route path="/" element={<MainPage />} />
-
-        {/* Страница логина */}
+        <Route path="/" element={<MainPage offers={offers} />} />
         <Route path="/login" element={<LoginPage />} />
-
-        {/* Защищенная страница избранного */}
         <Route
           path="/favorites"
           element={
             <PrivateRoute>
-              <FavoritesPage />
+              <FavoritesPage offers={offers.filter((offer) => offer.isFavorite)} />
             </PrivateRoute>
           }
         />
-
-        {/* Страница предложения */}
-        <Route path="/offer/:id" element={<OfferPage />} />
-
-        {/* 404 - несуществующий маршрут */}
+        <Route path="/offer/:id" element={<OfferPage offers={offers} reviews={reviews} />} />
         <Route path="*" element={<NotFound404Page />} />
       </Routes>
     </BrowserRouter>
