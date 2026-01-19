@@ -1,4 +1,5 @@
 import {Coordinates} from '../coordinates/coordinates.ts';
+import { CityName } from '../city/types'; // ← Добавляем импорт CityName
 
 type OfferCommonDto = {
   id: string;
@@ -43,7 +44,7 @@ export type Offer = {
   title: OfferDto['title'];
   type: OfferDto['type'];
   price: OfferDto['price'];
-  city: string;
+  city: CityName;
   location: Coordinates;
   isPremium: OfferDto['isPremium'];
   isFavorite: OfferDto['isFavorite'];

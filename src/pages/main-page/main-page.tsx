@@ -1,24 +1,97 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Offer } from '../../shared/entities/offer/types';
-import OffersList from '../../components/offer-card-list/offer-card-list';
-import Map from '../../components/map/map'; // ✅ Импортируем компонент Map
+import { CityName } from '../../shared/entities/city/types';
+import Map from '../../components/map/map';
 
-interface MainPageProps {
-  offers: Offer[];
-}
+function MainPage() {
+  const offers: Offer[] = [
+    {
+      id: '1',
+      title: 'Beautiful & luxurious apartment at great location',
+      type: 'Apartment',
+      price: 120,
+      city: CityName.Amsterdam,
+      location: {
+        latitude: 52.3909553943508,
+        longitude: 4.85309666406198,
+        zoom: 10,
+      },
+      rating: 4.8,
+      previewImage: 'img/apartment-01.jpg',
+      isPremium: true,
+      isFavorite: false
+    },
+    {
+      id: '2',
+      title: 'Wood and stone place',
+      type: 'Private room',
+      price: 80,
+      city: CityName.Amsterdam,
+      location: {
+        latitude: 52.3609553943508,
+        longitude: 4.85309666406198,
+        zoom: 10,
+      },
+      rating: 4.2,
+      previewImage: 'img/room.jpg',
+      isPremium: false,
+      isFavorite: true
+    },
+    {
+      id: '3',
+      title: 'Canal View Prinsengracht',
+      type: 'Apartment',
+      price: 132,
+      city: CityName.Amsterdam,
+      location: {
+        latitude: 52.3909553943508,
+        longitude: 4.929309666406198,
+        zoom: 10,
+      },
+      rating: 4.7,
+      previewImage: 'img/apartment-02.jpg',
+      isPremium: false,
+      isFavorite: false
+    },
+    {
+      id: '4',
+      title: 'Nice, cozy, warm big bed apartment',
+      type: 'Apartment',
+      price: 180,
+      city: CityName.Amsterdam,
+      location: {
+        latitude: 52.3809553943508,
+        longitude: 4.939309666406198,
+        zoom: 10,
+      },
+      rating: 5.0,
+      previewImage: 'img/apartment-03.jpg',
+      isPremium: true,
+      isFavorite: false
+    },
+    {
+      id: '5',
+      title: 'Wood and stone place',
+      type: 'Private room',
+      price: 80,
+      city: CityName.Paris,
+      location: {
+        latitude: 48.85661,
+        longitude: 2.351499,
+        zoom: 10,
+      },
+      rating: 4.2,
+      previewImage: 'img/room.jpg',
+      isPremium: false,
+      isFavorite: false
+    },
+  ];
 
-function MainPage({ offers }: MainPageProps) {
-  const [activeCardId, setActiveCardId] = useState<string | null>(null);
-  const cityOffers = offers.filter((offer) => offer.city === 'Amsterdam');
-  const offersCount = cityOffers.length;
-  const favoriteCount = offers.filter((o) => o.isFavorite).length;
-
-  const handleCardHover = (offerId: string | null) => {
-    setActiveCardId(offerId);
-  };
-
-  const activeOffer = cityOffers.find((offer) => offer.id === activeCardId);
+  const currentCity = CityName.Amsterdam;
+  // Правильное сравнение enum: оба значения одного типа CityName
+  const filteredOffers = offers.filter((offer) => offer.city === currentCity);
+  const offersCount = filteredOffers.length;
 
   return (
     <div className="page page--gray page--main">
@@ -63,32 +136,32 @@ function MainPage({ offers }: MainPageProps) {
             <ul className="locations__list tabs__list">
               <li className="locations__item">
                 <a className="locations__item-link tabs__item" href="#">
-                  <span>Paris</span>
+                  <span>{CityName.Paris}</span>
                 </a>
               </li>
               <li className="locations__item">
                 <a className="locations__item-link tabs__item" href="#">
-                  <span>Cologne</span>
+                  <span>{CityName.Cologne}</span>
                 </a>
               </li>
               <li className="locations__item">
                 <a className="locations__item-link tabs__item" href="#">
-                  <span>Brussels</span>
+                  <span>{CityName.Brussels}</span>
                 </a>
               </li>
               <li className="locations__item">
                 <a className="locations__item-link tabs__item tabs__item--active" href="#">
-                  <span>Amsterdam</span>
+                  <span>{CityName.Amsterdam}</span>
                 </a>
               </li>
               <li className="locations__item">
                 <a className="locations__item-link tabs__item" href="#">
-                  <span>Hamburg</span>
+                  <span>{CityName.Hamburg}</span>
                 </a>
               </li>
               <li className="locations__item">
                 <a className="locations__item-link tabs__item" href="#">
-                  <span>Dusseldorf</span>
+                  <span>{CityName.Dusseldorf}</span>
                 </a>
               </li>
             </ul>
@@ -98,7 +171,7 @@ function MainPage({ offers }: MainPageProps) {
           <div className="cities__places-container container">
             <section className="cities__places places">
               <h2 className="visually-hidden">Places</h2>
-              <b className="places__found">{offersCount} places to stay in Amsterdam</b>
+              <b className="places__found">{offersCount} places to stay in {currentCity}</b>
               <form className="places__sorting" action="#" method="get">
                 <span className="places__sorting-caption">Sort by</span>
                 <span className="places__sorting-type" tabIndex={0}>
@@ -108,15 +181,18 @@ function MainPage({ offers }: MainPageProps) {
                   </svg>
                 </span>
               </form>
-
-              <OffersList offers={cityOffers} onCardHover={handleCardHover} />
-
+              <div className="cities__places-list places__list tabs__content">
+                {filteredOffers.map((offer) => (
+                  <OfferCard key={offer.id} offer={offer} />
+                ))}
+              </div>
             </section>
             <div className="cities__right-section">
-              {/* ✅ Заменяем пустой контейнер на реальную карту */}
-              <section className="cities__map map">
-                <Map offers={cityOffers} activeCardId={activeCardId} />
-              </section>
+              <Map
+                offers={filteredOffers}
+                cityName={currentCity}
+                className="cities__map"
+              />
             </div>
           </div>
         </div>
