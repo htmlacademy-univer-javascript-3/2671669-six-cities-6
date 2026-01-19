@@ -1,26 +1,24 @@
+// src/components/map/map.tsx (обновленный)
 import { useEffect, useRef } from 'react';
 import leaflet from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { Offer } from '../../shared/entities/offer/types';
 import { CityName } from '../../shared/entities/city/types';
 
+// Используем дефолтный маркер
 const defaultIcon = leaflet.icon({
-  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
-  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
+  iconUrl: '/img/pin.svg',
+  iconSize: [27, 39],
+  iconAnchor: [13.5, 39],
 });
 
+// Активный маркер (оранжевый)
 const activeIcon = leaflet.icon({
-  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x-red.png',
-  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-red.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
+  iconUrl: '/img/pin-active.svg',
+  iconSize: [27, 39],
+  iconAnchor: [13.5, 39],
 });
 
-// Центры городов для разных CityName
 const CITY_CENTERS: Record<CityName, { latitude: number; longitude: number; zoom: number }> = {
   [CityName.Amsterdam]: { latitude: 52.37454, longitude: 4.897976, zoom: 12 },
   [CityName.Paris]: { latitude: 48.85661, longitude: 2.351499, zoom: 12 },
@@ -32,7 +30,7 @@ const CITY_CENTERS: Record<CityName, { latitude: number; longitude: number; zoom
 
 type MapProps = {
   offers: Offer[];
-  activeCardId?: string | null;
+  activeCardId: string | null;
   cityName: CityName;
   className?: string;
 };
@@ -41,7 +39,6 @@ function Map({ offers, activeCardId, cityName, className = '' }: MapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<leaflet.Map | null>(null);
   const markersRef = useRef<leaflet.Marker[]>([]);
-  const layerRef = useRef<leaflet.Layer | null>(null);
 
   useEffect(() => {
     if (mapRef.current && !mapInstanceRef.current) {
@@ -52,7 +49,7 @@ function Map({ offers, activeCardId, cityName, className = '' }: MapProps) {
         scrollWheelZoom: false,
       });
 
-      layerRef.current = leaflet
+      leaflet
         .tileLayer(
           'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
           {
@@ -68,7 +65,7 @@ function Map({ offers, activeCardId, cityName, className = '' }: MapProps) {
         mapInstanceRef.current = null;
       }
     };
-  }, [cityName]); // ← Добавили cityName в зависимости
+  }, [cityName]);
 
   useEffect(() => {
     if (!mapInstanceRef.current) {
@@ -83,28 +80,29 @@ function Map({ offers, activeCardId, cityName, className = '' }: MapProps) {
   }, [cityName]);
 
   useEffect(() => {
-    if (!mapInstanceRef.current || offers.length === 0) {
+    if (!mapInstanceRef.current) {
       return;
     }
 
+    // Удаляем старые маркеры
     markersRef.current.forEach((marker) => marker.remove());
     markersRef.current = [];
 
-    // Правильное сравнение enum: приводим к строке или сравниваем напрямую
+    // Фильтруем предложения по текущему городу
     const cityOffers = offers.filter((offer) => offer.city === cityName);
 
+    // Создаем маркеры
     cityOffers.forEach((offer) => {
       const marker = leaflet
         .marker([offer.location.latitude, offer.location.longitude], {
-          title: offer.title,
           icon: offer.id === activeCardId ? activeIcon : defaultIcon,
         })
         .addTo(mapInstanceRef.current!);
 
-      marker.bindPopup(`<b>${offer.title}</b><br>€${offer.price} per night`);
       markersRef.current.push(marker);
     });
 
+    // Центрируем карту на маркерах
     if (cityOffers.length > 0) {
       const bounds = leaflet.latLngBounds(
         cityOffers.map((offer) => [offer.location.latitude, offer.location.longitude])

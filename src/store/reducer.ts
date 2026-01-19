@@ -1,12 +1,15 @@
 import { createReducer } from '@reduxjs/toolkit';
-import { CityName } from '../shared/entities/city/types'; // ← Импортируем enum
+import { CityName } from '../shared/entities/city/types';
+import { SortingOption } from '../shared/entities/sorting/types'; // ← Добавьте импорт
 import { AppState } from './types';
-import { changeCity, setOffers } from './actions';
+import { changeCity, setOffers, setSortingOption, setActiveCardId } from './actions';
 
 const initialState: AppState = {
-  city: CityName.Paris, // ← Используем enum!
+  city: CityName.Paris,
   offers: [],
   filteredOffers: [],
+  sortingOption: 'Popular' as SortingOption, // ← Явно указываем тип
+  activeCardId: null,
 };
 
 const appReducer = createReducer(initialState, (builder) => {
@@ -22,6 +25,12 @@ const appReducer = createReducer(initialState, (builder) => {
       state.filteredOffers = action.payload.filter(
         (offer) => offer.city === state.city
       );
+    })
+    .addCase(setSortingOption, (state, action) => {
+      state.sortingOption = action.payload;
+    })
+    .addCase(setActiveCardId, (state, action) => {
+      state.activeCardId = action.payload;
     });
 });
 

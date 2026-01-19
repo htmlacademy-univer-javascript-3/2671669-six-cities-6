@@ -1,97 +1,42 @@
+import { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import OfferCard from '../../components/offer-card-list/offer-card';
-import { Offer } from '../../shared/entities/offer/types';
-import { CityName } from '../../shared/entities/city/types';
 import Map from '../../components/map/map';
+import SortingOptions from '../../components/sorting-options/sorting-options';
+import { RootState } from '../../store';
+import { setActiveCardId, setSortingOption, changeCity, setOffers } from '../../store/actions';
+import { sortOffers } from '../../shared/utils/sorting';
+import { CityName } from '../../shared/entities/city/types';
+import { SortingOption } from '../../shared/entities/sorting/types';
+import { mockOffers } from '../../mocks/offers';
 
 function MainPage() {
-  const offers: Offer[] = [
-    {
-      id: '1',
-      title: 'Beautiful & luxurious apartment at great location',
-      type: 'Apartment',
-      price: 120,
-      city: CityName.Amsterdam,
-      location: {
-        latitude: 52.3909553943508,
-        longitude: 4.85309666406198,
-        zoom: 10,
-      },
-      rating: 4.8,
-      previewImage: 'img/apartment-01.jpg',
-      isPremium: true,
-      isFavorite: false
-    },
-    {
-      id: '2',
-      title: 'Wood and stone place',
-      type: 'Private room',
-      price: 80,
-      city: CityName.Amsterdam,
-      location: {
-        latitude: 52.3609553943508,
-        longitude: 4.85309666406198,
-        zoom: 10,
-      },
-      rating: 4.2,
-      previewImage: 'img/room.jpg',
-      isPremium: false,
-      isFavorite: true
-    },
-    {
-      id: '3',
-      title: 'Canal View Prinsengracht',
-      type: 'Apartment',
-      price: 132,
-      city: CityName.Amsterdam,
-      location: {
-        latitude: 52.3909553943508,
-        longitude: 4.929309666406198,
-        zoom: 10,
-      },
-      rating: 4.7,
-      previewImage: 'img/apartment-02.jpg',
-      isPremium: false,
-      isFavorite: false
-    },
-    {
-      id: '4',
-      title: 'Nice, cozy, warm big bed apartment',
-      type: 'Apartment',
-      price: 180,
-      city: CityName.Amsterdam,
-      location: {
-        latitude: 52.3809553943508,
-        longitude: 4.939309666406198,
-        zoom: 10,
-      },
-      rating: 5.0,
-      previewImage: 'img/apartment-03.jpg',
-      isPremium: true,
-      isFavorite: false
-    },
-    {
-      id: '5',
-      title: 'Wood and stone place',
-      type: 'Private room',
-      price: 80,
-      city: CityName.Paris,
-      location: {
-        latitude: 48.85661,
-        longitude: 2.351499,
-        zoom: 10,
-      },
-      rating: 4.2,
-      previewImage: 'img/room.jpg',
-      isPremium: false,
-      isFavorite: false
-    },
-  ];
+  const dispatch = useDispatch();
+  const { city, filteredOffers, sortingOption, activeCardId } = useSelector(
+    (state: RootState) => state
+  );
 
-  const currentCity = CityName.Amsterdam;
-  // Правильное сравнение enum: оба значения одного типа CityName
-  const filteredOffers = offers.filter((offer) => offer.city === currentCity);
-  const offersCount = filteredOffers.length;
+  // Инициализация данных
+  useEffect(() => {
+    dispatch(setOffers(mockOffers));
+  }, [dispatch]);
+
+  // Применяем сортировку к отфильтрованным предложениям
+  const sortedOffers = sortOffers(filteredOffers, sortingOption);
+  const offersCount = sortedOffers.length;
+
+  const handleSortingChange = (option: SortingOption) => {
+    dispatch(setSortingOption(option));
+  };
+
+  const handleCardHover = (id: string | null) => {
+    dispatch(setActiveCardId(id));
+  };
+
+  const handleCityChange = (newCity: CityName) => {
+    dispatch(changeCity(newCity));
+  };
 
   return (
     <div className="page page--gray page--main">
@@ -128,67 +73,77 @@ function MainPage() {
         <div className="tabs">
           <section className="locations container">
             <ul className="locations__list tabs__list">
-              <li className="locations__item">
-                <a className="locations__item-link tabs__item" href="#">
-                  <span>{CityName.Paris}</span>
-                </a>
-              </li>
-              <li className="locations__item">
-                <a className="locations__item-link tabs__item" href="#">
-                  <span>{CityName.Cologne}</span>
-                </a>
-              </li>
-              <li className="locations__item">
-                <a className="locations__item-link tabs__item" href="#">
-                  <span>{CityName.Brussels}</span>
-                </a>
-              </li>
-              <li className="locations__item">
-                <a className="locations__item-link tabs__item tabs__item--active" href="#">
-                  <span>{CityName.Amsterdam}</span>
-                </a>
-              </li>
-              <li className="locations__item">
-                <a className="locations__item-link tabs__item" href="#">
-                  <span>{CityName.Hamburg}</span>
-                </a>
-              </li>
-              <li className="locations__item">
-                <a className="locations__item-link tabs__item" href="#">
-                  <span>{CityName.Dusseldorf}</span>
-                </a>
-              </li>
+              {Object.values(CityName).map((cityName) => (
+                <li key={cityName} className="locations__item">
+                  <a 
+                    className={`locations__item-link tabs__item ${cityName === city ? 'tabs__item--active' : ''}`}
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleCityChange(cityName);
+                    }}
+                  >
+                    <span>{cityName}</span>
+                  </a>
+                </li>
+              ))}
             </ul>
           </section>
         </div>
+        
         <div className="cities">
-          <div className="cities__places-container container">
-            <section className="cities__places places">
-              <h2 className="visually-hidden">Places</h2>
-              <b className="places__found">{offersCount} places to stay in {currentCity}</b>
-              <form className="places__sorting" action="#" method="get">
-                <span className="places__sorting-caption">Sort by</span>
-                <span className="places__sorting-type" tabIndex={0}>
-                  Popular
-                  <svg className="places__sorting-arrow" width="7" height="4">
-                    <use xlinkHref="#icon-arrow-select"></use>
-                  </svg>
-                </span>
-              </form>
-              <div className="cities__places-list places__list tabs__content">
-                {filteredOffers.map((offer) => (
-                  <OfferCard key={offer.id} offer={offer} />
-                ))}
+          {sortedOffers.length === 0 ? (
+            <div className="cities__places-container cities__places-container--empty container">
+              <section className="cities__no-places">
+                <div className="cities__status-wrapper">
+                  <b className="cities__status">No places to stay available</b>
+                  <p className="cities__status-description">
+                    We could not find any property available at the moment in {city}
+                  </p>
+                </div>
+              </section>
+              <div className="cities__right-section">
+                <Map 
+                  offers={sortedOffers}
+                  activeCardId={activeCardId}
+                  cityName={city}
+                  className="cities__map cities__map--empty"
+                />
               </div>
-            </section>
-            <div className="cities__right-section">
-              <Map
-                offers={filteredOffers}
-                cityName={currentCity}
-                className="cities__map"
-              />
             </div>
-          </div>
+          ) : (
+            <div className="cities__places-container container">
+              <section className="cities__places places">
+                <h2 className="visually-hidden">Places</h2>
+                <b className="places__found">{offersCount} places to stay in {city}</b>
+                
+                <SortingOptions 
+                  currentOption={sortingOption}
+                  onOptionChange={handleSortingChange}
+                />
+                
+                <div className="cities__places-list places__list tabs__content">
+                  {sortedOffers.map((offer) => (
+                    <OfferCard 
+                      key={offer.id} 
+                      offer={offer}
+                      onMouseEnter={() => handleCardHover(offer.id)}
+                      onMouseLeave={() => handleCardHover(null)}
+                    />
+                  ))}
+                </div>
+              </section>
+              
+              <div className="cities__right-section">
+                <Map 
+                  offers={sortedOffers}
+                  activeCardId={activeCardId}
+                  cityName={city}
+                  className="cities__map"
+                />
+              </div>
+            </div>
+          )}
         </div>
       </main>
     </div>

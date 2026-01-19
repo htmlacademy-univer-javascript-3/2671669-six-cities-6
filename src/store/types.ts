@@ -1,11 +1,13 @@
-import { CityName } from '../shared/entities/city/types'; // ← Правильный путь!
+// src/store/types.ts
+import { CityName } from '../shared/entities/city/types';
+import { SortingOption } from '../shared/entities/sorting/types';
 
 export type Offer = {
   id: string;
   title: string;
   type: string;
   price: number;
-  city: CityName; // ← Используем enum CityName
+  city: CityName;
   location: {
     latitude: number;
     longitude: number;
@@ -18,7 +20,9 @@ export type Offer = {
 };
 
 export type AppState = {
-  city: CityName; // ← Используем enum CityName
+  city: CityName;
   offers: Offer[];
   filteredOffers: Offer[];
+  sortingOption: SortingOption;
+  activeCardId: string | null;
 };
