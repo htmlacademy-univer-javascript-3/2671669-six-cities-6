@@ -1,13 +1,16 @@
-import { Link } from 'react-router-dom';
+import {NavLink} from 'react-router-dom';
+import {RoutePath} from '../../shared/enums/routes.ts';
 
-function NotFound404Page() {
+export const NotFound404Page = () => {
   return (
-    <div style={{ textAlign: 'center', padding: '50px' }}>
-      <h1>404 Not Found</h1>
-      <p>Страница не найдена</p>
-      <Link to="/">На главную</Link>
+    <div className="page">
+      <h1>404 Not Found :(</h1>
+      <NavLink
+        to={'/' + RoutePath.MainPage}
+        className="locations__item-link tabs__item tabs__item--active"
+      >
+        На главную
+      </NavLink>
     </div>
   );
-}
-
-export default NotFound404Page;
+};

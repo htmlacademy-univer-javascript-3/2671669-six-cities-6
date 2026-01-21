@@ -1,15 +1,28 @@
-import { Link } from 'react-router-dom';
+import {FC} from 'react';
+import {Navigate, NavLink} from 'react-router-dom';
+import {HeaderLogoLink} from '../../components/shared/header-logo-link/header-logo-link.tsx';
+import {cities, CITY_SEARCH_PARAM} from '../../shared/entities/city/constants.ts';
+import {RoutePath} from '../../shared/enums/routes.ts';
+import {useAppSelector} from '../../shared/redux-helpers/typed-hooks.ts';
+import {getRandomInt} from '../../shared/utils/math-utils.ts';
+import {LoginForm} from './login-form.tsx';
 
-function LoginPage() {
+export const LoginPage: FC = () => {
+  const isAuthorize = useAppSelector((state) => !!state.currentUser.userData);
+
+  if (isAuthorize) {
+    return <Navigate to={'/' + RoutePath.MainPage}/>;
+  }
+
+  const city = cities[getRandomInt(0, cities.length - 1)];
+
   return (
     <div className="page page--gray page--login">
       <header className="header">
         <div className="container">
           <div className="header__wrapper">
             <div className="header__left">
-              <Link to="/" className="header__logo-link">
-                <img className="header__logo" src="img/logo.svg" alt="6 cities logo" width="81" height="41" />
-              </Link>
+              <HeaderLogoLink/>
             </div>
           </div>
         </div>
@@ -19,36 +32,23 @@ function LoginPage() {
         <div className="page__login-container container">
           <section className="login">
             <h1 className="login__title">Sign in</h1>
-            <form className="login__form form">
-              <div className="login__input-wrapper form__input-wrapper">
-                <label className="visually-hidden">E-mail</label>
-                <input
-                  className="login__input form__input"
-                  type="email"
-                  name="email"
-                  placeholder="Email"
-                  required
-                />
-              </div>
-              <div className="login__input-wrapper form__input-wrapper">
-                <label className="visually-hidden">Password</label>
-                <input
-                  className="login__input form__input"
-                  type="password"
-                  name="password"
-                  placeholder="Password"
-                  required
-                />
-              </div>
-              <button className="login__submit form__submit button" type="submit">
-                Sign in
-              </button>
-            </form>
+            <LoginForm/>
+          </section>
+          <section className="locations locations--login locations--current">
+            <div className="locations__item">
+              <NavLink
+                className="locations__item-link"
+                to={{
+                  pathname: '/' + RoutePath.MainPage,
+                  search: `?${CITY_SEARCH_PARAM}=${city}`,
+                }}
+              >
+                <span>{city}</span>
+              </NavLink>
+            </div>
           </section>
         </div>
       </main>
     </div>
   );
-}
-
-export default LoginPage;
+};

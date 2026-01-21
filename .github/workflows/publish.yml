@@ -42,3 +42,4 @@ jobs:
           message: |
             Ваш пулреквест опубликован. Посмотреть можно [здесь](https://${{ env.BUILD_URL }}/${{ env.PR }}/)
           pr_number: ${{ env.PR }}
+          

@@ -13,7 +13,11 @@ module.exports = {
   settings: { react: { version: 'detect' } },
   plugins: ['react-refresh'],
   rules: {
+    'arrow-body-style': 'off',
+    'prefer-template': 'off',
     'react-refresh/only-export-components': 'warn',
+    'react/jsx-boolean-value': 'off',
+    'react/prop-types': 'off',
   },
   overrides: [
     {
