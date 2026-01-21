@@ -3,5 +3,5 @@ export enum RoutePath {
   FavoritesPage = 'favorites',
   LoginPage = 'login',
   OfferPage = 'offer',
-  Page404 = '404',
+  PropertyPage = 'property',
 }

@@ -1,4 +1,3 @@
-import {OfferSortOption} from './constants.ts';
 import {Offer, OfferDto, OffersByCity} from './types.ts';
 
 export const mapDtoToOffer = (dto: OfferDto): Offer => ({
@@ -24,17 +23,4 @@ export const groupOffersByCity = (offers: Offer[]): OffersByCity => {
     offersByCity[city].push(offer);
   });
   return offersByCity;
-};
-
-export const applySortToOffers = (offers: Offer[], sortOption: OfferSortOption): Offer[] => {
-  switch (sortOption) {
-    case OfferSortOption.popular:
-      return offers;
-    case OfferSortOption.topRated:
-      return offers.sort((o1, o2) => o2.rating - o1.rating);
-    case OfferSortOption.price_LtH:
-      return offers.sort((o1, o2) => o1.price - o2.price);
-    case OfferSortOption.price_HtL:
-      return offers.sort((o1, o2) => o2.price - o1.price);
-  }
 };

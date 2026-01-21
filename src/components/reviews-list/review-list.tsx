@@ -1,23 +1,18 @@
-import { Review } from '../../mocks';
-import ReviewItem from '../reviews-list/review-item';
+import ReviewItem from './review-item';
+import { Review } from '../../shared/entities/review/types';
 
-interface ReviewsListProps {
+type ReviewListProps = {
   reviews: Review[];
-}
+};
 
-function ReviewsList({ reviews }: ReviewsListProps) {
+function ReviewList({ reviews }: ReviewListProps) {
   return (
-    <section className="offer__reviews reviews">
-      <h2 className="reviews__title">
-        Reviews · <span className="reviews__amount">{reviews.length}</span>
-      </h2>
-      <ul className="reviews__list">
-        {reviews.map((review) => (
-          <ReviewItem key={review.id} review={review} />
-        ))}
-      </ul>
-    </section>
+    <ul className="reviews__list">
+      {reviews.map((review) => (
+        <ReviewItem key={review.id} review={review} />
+      ))}
+    </ul>
   );
 }
 
-export default ReviewsList;
+export default ReviewList;

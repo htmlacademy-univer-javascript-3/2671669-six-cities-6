@@ -1,42 +1,39 @@
-import { useState } from 'react';
-import { Offer } from '../../shared/entities/offer/types';
-import OfferCard from '../offer-card-list/offer-card';
+import React, {FC} from 'react';
+import {Offer} from '../../shared/entities/offer/types.ts';
+import {FavoriteStatus} from '../../shared/server/constants.ts';
+import {OfferCard} from './offer-card.tsx';
+import PropTypes from 'prop-types';
 
-interface OffersListProps {
+type OfferCardsProps = {
   offers: Offer[];
-  onCardHover?: (offerId: string | null) => void;
-}
+  containerClassName?: string;
+  onCardHover?: (offerId: Offer['id']) => void;
+  onChangeFavoriteStatus?: (offerId: Offer['id'], status: FavoriteStatus) => void;
+};
 
-function OffersList({ offers, onCardHover }: OffersListProps) {
-  const [activeCardId, setActiveCardId] = useState<string | null>(null);
+export const OfferCardList: FC<OfferCardsProps> = React.memo(({
+  offers,
+  containerClassName,
+  onCardHover,
+  onChangeFavoriteStatus,
+}) => (
+  <div className={containerClassName}>
+    {offers.map((offer) => (
+      <OfferCard
+        key={offer.id}
+        offer={offer}
+        onMouseEnter={() => onCardHover?.(offer.id)}
+        onChangeFavoriteStatus={onChangeFavoriteStatus}
+      />
+    ))}
+  </div>
+));
 
-  const handleCardMouseEnter = (id: string) => {
-    setActiveCardId(id);
-    if (onCardHover) {
-      onCardHover(id);
-    }
-  };
+OfferCardList.propTypes = {
+  offers: PropTypes.array.isRequired,
+  containerClassName: PropTypes.string,
+  onCardHover: PropTypes.func,
+  onChangeFavoriteStatus: PropTypes.func,
+};
 
-  const handleCardMouseLeave = () => {
-    setActiveCardId(null);
-    if (onCardHover) {
-      onCardHover(null);
-    }
-  };
-
-  return (
-    <div className="cities__places-list places__list tabs__content">
-      {offers.map((offer) => (
-        <OfferCard
-          key={offer.id}
-          offer={offer}
-          isActive={offer.id === activeCardId} // ✅ Используем activeCardId
-          onMouseEnter={() => handleCardMouseEnter(offer.id)}
-          onMouseLeave={handleCardMouseLeave}
-        />
-      ))}
-    </div>
-  );
-}
-
-export default OffersList;
+OfferCardList.displayName = 'OfferCardList';

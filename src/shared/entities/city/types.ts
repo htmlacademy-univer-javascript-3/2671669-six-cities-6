@@ -1,13 +1,4 @@
-import {Coordinates} from '../coordinates/coordinates.ts';
-
-export enum CityName {
-  Paris = 'Paris',
-  Cologne = 'Cologne',
-  Brussels = 'Brussels',
-  Amsterdam = 'Amsterdam',
-  Hamburg = 'Hamburg',
-  Dusseldorf = 'Dusseldorf',
-}
+import {Coordinates} from '../coordinates/coordinates.ts'; //C:\Users\astonuser\cities\2671669-six-cities-6\src\shared\entities\coordinates\coordinates.ts
 
 export type City = {
   name: string;

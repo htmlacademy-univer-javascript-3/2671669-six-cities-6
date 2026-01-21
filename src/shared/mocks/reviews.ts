@@ -10,7 +10,7 @@ export type Review = {
   rating: number;
 };
 
-export const mockReviews: Review[] = [
+export const reviewsMock: Review[] = [
   {
     id: '1',
     date: '2024-04-01',

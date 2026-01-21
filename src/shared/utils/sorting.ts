@@ -1,7 +1,11 @@
-import { Offer } from '../entities/offer/types';
+import { Offer } from '../../store/types';
 import { SortingOption } from '../entities/sorting/types';
 
 export function sortOffers(offers: Offer[], option: SortingOption): Offer[] {
+  if (!offers || !Array.isArray(offers)) {
+    return [];
+  }
+
   const sortedOffers = [...offers];
 
   switch (option) {
@@ -13,6 +17,6 @@ export function sortOffers(offers: Offer[], option: SortingOption): Offer[] {
       return sortedOffers.sort((a, b) => b.rating - a.rating);
     case 'Popular':
     default:
-      return offers; // Исходный порядок
+      return offers;
   }
 }

@@ -1,21 +1,19 @@
-import { Review } from '../../mocks';
+import { format } from 'date-fns';
+import { Review } from '../../shared/entities/review/types';
 
-interface ReviewItemProps {
+type ReviewItemProps = {
   review: Review;
-}
+};
 
 function ReviewItem({ review }: ReviewItemProps) {
-  const { date, user, comment, rating } = review;
+  const { comment, date, rating, user } = review;
 
-  const formattedDate = new Date(date).toLocaleDateString('en-US', {
-    month: 'long',
-    year: 'numeric',
-  });
+  const formattedDate = format(new Date(date), 'MMMM yyyy');
 
   return (
     <li className="reviews__item">
       <div className="reviews__user user">
-        <div className={`reviews__avatar-wrapper ${user.isPro ? 'reviews__avatar-wrapper--pro' : ''} user__avatar-wrapper`}>
+        <div className="reviews__avatar-wrapper user__avatar-wrapper">
           <img
             className="reviews__avatar user__avatar"
             src={user.avatarUrl}
@@ -25,6 +23,9 @@ function ReviewItem({ review }: ReviewItemProps) {
           />
         </div>
         <span className="reviews__user-name">{user.name}</span>
+        {user.isPro && (
+          <span className="reviews__user-status">Pro</span>
+        )}
       </div>
       <div className="reviews__info">
         <div className="reviews__rating rating">
